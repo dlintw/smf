@@ -90,6 +90,37 @@ function rpms() {
     python ${extra}
 }
 
+function pacmans() {
+  if [ -n "${USE_CLANG}" ]; then
+    extra=clang
+  fi
+  pacman -Syu --needed \
+    cmake \
+    boost \
+    gnutls \
+    protobuf \
+    libpciaccess \
+    gflags \
+    google-glog \
+    libaio \
+    hwloc \
+    yaml-cpp \
+    ragel \
+    libunwind \
+    libxml2 \
+    xfsprogs \
+    numactl \
+    lksctp-tools \
+    ninja \
+    doxygen \
+    graphviz \
+    xmlto \
+    python2 \
+    python ${extra}
+
+  # TODO: AUR packages: cryptopp systemtap, ref: Dockerfile.arch
+}
+
 source /etc/os-release
 case $ID in
   debian|ubuntu|linuxmint)
@@ -98,6 +129,10 @@ case $ID in
 
   centos|fedora)
     rpms
+    ;;
+
+  arch)
+    pacmans
     ;;
 
   *)

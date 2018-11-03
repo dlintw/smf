@@ -14,7 +14,7 @@ buildcmd="ninja"
 buildtype="debug"
 builddir=$root/build/debug
 case $ID in
-    debian|ubuntu|linuxmint)
+    debian|ubuntu|linuxmint|arch)
         echo "$ID supported"
         buildcmd="ninja"
         ;;
@@ -119,7 +119,7 @@ EOM
 }
 
 
-while getopts ":drtfpb" optKey; do
+while getopts ":drtfp" optKey; do
     case $optKey in
         d)
             debug

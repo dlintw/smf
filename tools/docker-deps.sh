@@ -33,6 +33,10 @@ function debian() {
             unzip -y
 
 }
+function archlinux() {
+    pacman -S --noconfirm --needed zip unzip
+}
+
 case $ID in
     debian|ubuntu|linuxmint)
         debian
@@ -41,7 +45,9 @@ case $ID in
     centos|fedora)
         redhat
         ;;
-
+    arch)
+        archlinux
+	;;
     *)
         echo "$ID not supported. Install bazel manually."
         exit 1

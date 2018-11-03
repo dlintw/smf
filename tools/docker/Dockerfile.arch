@@ -1,0 +1,31 @@
+FROM base/archlinux
+RUN pacman -Syu --noconfirm base-devel git
+RUN echo "en_US ISO-8859-1" >> /etc/locale.gen \
+    && echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
+    && locale-gen
+RUN echo "LANG=en_US.utf8" > /etc/locale.conf
+RUN git clone https://github.com/senior7515/smf.git
+
+WORKDIR smf/
+RUN /smf/tools/docker-deps.sh
+RUN git submodule update --init --recursive
+RUN ./install-deps.sh
+#RUN ./src/third_party/seastar/install-dependencies.sh
+  # build from AUR by builder account
+
+RUN pacman -S --noconfirm --needed elfutils nss python2-setuptools \
+    python-setuptools
+
+# install package in AUR
+RUN useradd -m builder
+USER builder
+RUN git clone https://aur.archlinux.org/cryptopp
+RUN cd cryptopp && makepkg
+RUN git clone https://aur.archlinux.org/systemtap
+RUN cd systemtap ; makepkg --skippgpcheck
+USER root
+RUN pacman -U /home/builder/cryptopp/cryptopp*.pkg.tar.xz
+RUN pacman -U /home/builder/systemtap/systemtap*.pkg.tar.xz
+RUN ./tools/build.sh -rt
+
+EXPOSE 7000
