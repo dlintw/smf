@@ -96,6 +96,7 @@ function pacmans() {
   fi
   pacman -Syu --needed \
     cmake \
+    crypto++ \
     boost \
     gnutls \
     protobuf \
@@ -115,10 +116,9 @@ function pacmans() {
     doxygen \
     graphviz \
     xmlto \
-    python2 \
     python ${extra}
 
-  # TODO: AUR packages: cryptopp systemtap, ref: Dockerfile.arch
+  # TODO: AUR packages: systemtap, ref: Dockerfile.arch
 }
 
 source /etc/os-release

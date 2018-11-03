@@ -11,7 +11,6 @@ RUN /smf/tools/docker-deps.sh
 RUN git submodule update --init --recursive
 RUN ./install-deps.sh
 #RUN ./src/third_party/seastar/install-dependencies.sh
-  # build from AUR by builder account
 
 RUN pacman -S --noconfirm --needed elfutils nss python2-setuptools \
     python-setuptools
@@ -19,12 +18,10 @@ RUN pacman -S --noconfirm --needed elfutils nss python2-setuptools \
 # install package in AUR
 RUN useradd -m builder
 USER builder
-RUN git clone https://aur.archlinux.org/cryptopp
-RUN cd cryptopp && makepkg
 RUN git clone https://aur.archlinux.org/systemtap
 RUN cd systemtap ; makepkg --skippgpcheck
+
 USER root
-RUN pacman -U /home/builder/cryptopp/cryptopp*.pkg.tar.xz
 RUN pacman -U /home/builder/systemtap/systemtap*.pkg.tar.xz
 RUN ./tools/build.sh -rt
 
