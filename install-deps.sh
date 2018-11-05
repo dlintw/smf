@@ -94,7 +94,7 @@ function pacmans() {
   if [ -n "${USE_CLANG}" ]; then
     extra=clang
   fi
-  pacman -Syu --needed \
+  pacman -Syu --noconfirm --needed \
     cmake \
     crypto++ \
     boost \

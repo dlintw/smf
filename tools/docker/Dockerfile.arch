@@ -12,17 +12,22 @@ RUN git submodule update --init --recursive
 RUN ./install-deps.sh
 #RUN ./src/third_party/seastar/install-dependencies.sh
 
+# install systemtap package in AUR, dirty hack to version 4.0
 RUN pacman -S --noconfirm --needed elfutils nss python2-setuptools \
-    python-setuptools
-
-# install package in AUR
-RUN useradd -m builder
+    xmlto cpio
+RUN useradd -m builder \
+    && groupadd -r stapusr \
+    && groupadd -r stapsys \
+    && groupadd -r stapdev
 USER builder
 RUN git clone https://aur.archlinux.org/systemtap
-RUN cd systemtap ; makepkg --skippgpcheck
+RUN cd systemtap \
+    && sed -i 's/^pkgver=3.3/pkgver=4.0/' PKGBUILD \
+    && sed -i 's:\(rmdir "${pkgdir}/var/run/"$\):\1\n  mv "$pkgdir/usr/sbin/stap-exporter" "$pkgdir/usr/bin"\n  rm -rf "$pkgdir/usr/sbin":' PKGBUILD \
+    && makepkg --skippgpcheck --skipinteg
 
 USER root
-RUN pacman -U /home/builder/systemtap/systemtap*.pkg.tar.xz
+RUN pacman -U --noconfirm /home/builder/systemtap/systemtap*.pkg.tar.xz
 RUN ./tools/build.sh -rt
 
 EXPOSE 7000
